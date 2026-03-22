@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js for price graph -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- Navigation -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    
+    <!-- Logo -->
+    <div class="flex items-center gap-3">
+      <i class="fa-solid fa-seedling text-3xl text-green-600"></i>
+      <span class="text-2xl font-bold text-green-700">SmartFarm</span>
+    </div>
+
+    <!-- Desktop Menu -->
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
+      <a href="index.html" class="hover:text-green-600 transition">Home</a>
+      <a href="finance.html" class="nav-active text-green-700 font-semibold">Finance</a>
+      <a href="inventory.html" class="hover:text-green-600 transition">Inventory</a>
+      <a href="features.html" class="hover:text-green-600 transition">features</a>
+     
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button class="md:hidden text-3xl text-green-700">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-green-800">Inventory & Input Management</h1>
+      <p class="text-gray-600 mt-1">Track stock levels and monitor input price changes – March 18, 2026</p>
+    </div>
+    <div class="mt-4 md:mt-0 flex gap-3">
+      <button class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2">
+        <i class="fa-solid fa-plus"></i> Add New Item
+      </button>
+      <button class="border border-gray-300 hover:bg-gray-100 px-5 py-2.5 rounded-lg flex items-center gap-2">
+        <i class="fa-solid fa-download"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- LEFT COLUMN – Current Stock Levels -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+
+      <div class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-4">
+        <h2 class="text-xl font-semibold flex items-center gap-3">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          Current Stock Levels
+        </h2>
+      </div>
+
+      <div class="p-6">
+        <div class="mb-6 flex flex-wrap gap-3">
+          <input type="text" placeholder="Search item..." class="flex-1 border rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-green-500">
+          <select class="border rounded-lg px-4 py-2.5 bg-white">
+            <option>All Categories</option>
+            <option>Fertilizer</option>
+            <option>Seeds</option>
+            <option>Fuel</option>
+            <option>Pesticides</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="space-y-4" id="stock-container">
+          <!-- Items will be added here by JavaScript -->
+        </div>
+
+        <div class="mt-8 text-center text-gray-500 text-sm">
+          <p>Low stock items are highlighted in red • Warning level in yellow</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN – Input Price Tracker + Graph -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+
+      <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4">
+        <h2 class="text-xl font-semibold flex items-center gap-3">
+          <i class="fa-solid fa-chart-line"></i>
+          Input Price Tracker
+        </h2>
+      </div>
+
+      <div class="p-6">
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Select Input to View Price History</label>
+          <select id="price-item-select" class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="urea">Urea (50 kg bag)</option>
+            <option value="dap">DAP (50 kg bag)</option>
+            <option value="wheat-seeds">Wheat Seeds (20 kg)</option>
+            <option value="diesel">Diesel (per litre)</option>
+            <option value="neem-oil">Neem Oil (1 litre)</option>
+          </select>
+        </div>
+
+        <div class="mb-4 flex justify-between items-center">
+          <h3 class="text-lg font-semibold" id="selected-item-title">Urea (50 kg bag)</h3>
+          <span class="text-sm text-gray-500">Last 6 months</span>
+        </div>
+
+        <!-- Price Trend Chart -->
+        <div class="h-80">
+          <canvas id="priceChart"></canvas>
+        </div>
+
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-100">
+          <p class="text-sm text-blue-800">
+            <strong>Current advice:</strong>  price is <span class="font-semibold text-green-700">↓ 8% lower</span> than 3 months ago. Good time to buy in bulk if you have storage space.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// Sample stock data (you can save to localStorage later)
+const stockItems = [
+  { name: "Urea", category: "Fertilizer", qty: 145, unit: "bags", lowThreshold: 50, warningThreshold: 100 },
+  { name: "DAP", category: "Fertilizer", qty: 38, unit: "bags", lowThreshold: 40, warningThreshold: 80 },
+  { name: "Wheat Seeds", category: "Seeds", qty: 22, unit: "bags", lowThreshold: 15, warningThreshold: 30 },
+  { name: "Paddy Seeds", category: "Seeds", qty: 87, unit: "bags", lowThreshold: 20, warningThreshold: 50 },
+  { name: "Diesel", category: "Fuel", qty: 420, unit: "litres", lowThreshold: 150, warningThreshold: 300 },
+  { name: "Neem Oil", category: "Pesticides", qty: 12, unit: "litres", lowThreshold: 10, warningThreshold: 20 },
+];
+
+// Render stock items
+function renderStock() {
+  const container = document.getElementById('stock-container');
+  container.innerHTML = '';
+
+  stockItems.forEach(item => {
+    let statusClass = '';
+    let statusText = '';
+
+    if (item.qty <= item.lowThreshold) {
+      statusClass = 'low-stock';
+      statusText = 'CRITICAL – Reorder now!';
+    } else if (item.qty <= item.warningThreshold) {
+      statusClass = 'warning-stock';
+      statusText = 'Low – Consider reordering';
+    }
+
+    const card = document.createElement('div');
+    card.className = `p-5 border rounded-lg ${statusClass}`;
+    card.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div>
+          <h4 class="font-semibold text-lg">${item.name}</h4>
+          <p class="text-sm text-gray-600">${item.category} • ${item.qty} ${item.unit}</p>
+        </div>
+        <button class="text-gray-500 hover:text-gray-700">
+          <i class="fa-solid fa-edit"></i>
+        </button>
+      </div>
+      ${statusText ? `<p class="mt-2 text-sm font-medium ${statusClass.includes('low') ? 'text-red-700' : 'text-yellow-700'}">${statusText}</p>` : ''}
+    `;
+    container.appendChild(card);
+  });
+}
+
+renderStock();
+
+// Sample price history data (for 6 months)
+const priceData = {
+  urea: {
+    labels: ['Oct 2025', 'Nov', 'Dec', 'Jan 2026', 'Feb', 'Mar'],
+    prices: [620, 640, 610, 590, 575, 560]
+  },
+  dap: {
+    labels: ['Oct 2025', 'Nov', 'Dec', 'Jan 2026', 'Feb', 'Mar'],
+    prices: [1180, 1150, 1200, 1220, 1190, 1175]
+  },
+  'wheat-seeds': {
+    labels: ['Oct 2025', 'Nov', 'Dec', 'Jan 2026', 'Feb', 'Mar'],
+    prices: [980, 1020, 990, 950, 920, 940]
+  },
+  diesel: {
+    labels: ['Oct 2025', 'Nov', 'Dec', 'Jan 2026', 'Feb', 'Mar'],
+    prices: [89.5, 91.2, 93.8, 95.0, 92.6, 90.8]
+  },
+  'neem-oil': {
+    labels: ['Oct 2025', 'Nov', 'Dec', 'Jan 2026', 'Feb', 'Mar'],
+    prices: [480, 510, 495, 470, 450, 465]
+  }
+};
+
+// Initialize Chart.js
+let priceChart;
+
+function updatePriceChart(itemKey) {
+  const data = priceData[itemKey];
+
+  if (priceChart) priceChart.destroy();
+
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  priceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.labels,
+      datasets: [{
+        label: 'Price (₹)',
+        data: data.prices,
+        borderColor: 'rgb(34, 197, 94)',
+        backgroundColor: 'rgba(34, 197, 94, 0.15)',
+        tension: 0.3,
+        fill: true,
+        pointBackgroundColor: 'white',
+        pointBorderColor: 'rgb(34, 197, 94)',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context) => `₹${context.parsed.y.toFixed(1)}`
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          title: { display: true, text: 'Price per unit (₹)' }
+        }
+      }
+    }
+  });
+
+  // Update title
+  document.getElementById('selected-item-title').textContent = document.querySelector(`#price-item-select option[value="${itemKey}"]`).textContent;
+}
+
+// Initial chart
+updatePriceChart('urea');
+
+// Change item
+document.getElementById('price-item-select').addEventListener('change', (e) => {
+  updatePriceChart(e.target.value);
+});
+</script>
+<footer>
+  <div class="container">
+    <p style="margin-bottom:1.5rem; font-size:1.1rem;">
+      © 2026 Smart Farm — Modern Farm Management Software
+    </p>
+    <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-bottom:2rem;">
+      <a href="1-index.html">Home</a>
+      <a href="2-features.html">features</a>
+      <a href="3-stock.html">Crops & Animals</a>
+      <a href="4-inventory.html">Inventory</a>
+      <a href="5-finance.html">Finance</a>
+    </div>
+    <p style="font-size:0.95rem; opacity:0.7;">
+      Made with care for farmers who want to focus on growing .
+    </p>
+  </div>
+</footer>
+    
+</body>
+</html>

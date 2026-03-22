@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFarm-Crops & Animals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- Navigation -->
+<nav class="bg-white shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex justify-between items-center h-16">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-tractor text-3xl text-green-700"></i>
+        <span class="text-2xl font-bold text-green-800">FarmFlow</span>
+      </div>
+
+      <div class="hidden md:flex gap-8 text-sm font-medium">
+        <a href="1-index.html" class="text-gray-700 hover:text-green-700">Home</a>
+        <a href="2-finance.html" class="text-gray-700 hover:text-green-700">Finance</a>
+        <a href="3-stock.html" class="text-green-700 font-semibold">Crops & Animals</a>
+        <a href="4-features.html" class="text-gray-700 hover:text-green-700">features</a>
+        <a href="5-inventory.html" class="text-gray-700 hover:text-green-700">Inventory</a>
+      </div>
+
+      <button class="md:hidden text-2xl text-green-700">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+
+  <div class="mb-10">
+    <h1 class="text-4xl font-bold text-green-800">Crops & Animals</h1>
+    <p class="text-gray-600 mt-2">Manage crop cycles, field status, animal records and livestock health — March 20, 2026</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- ====================== -->
+    <!--       CROPS SECTION    -->
+    <!-- ====================== -->
+    <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+
+      <div class="bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-5">
+        <h2 class="text-2xl font-semibold flex items-center gap-3">
+          <i class="fa-solid fa-seedling text-3xl"></i>
+          Crop Records
+        </h2>
+      </div>
+
+      <div class="p-8">
+
+        <!-- Add new crop form -->
+        <div class="mb-10 bg-gray-50 p-6 rounded-2xl border border-gray-200">
+          <h3 class="text-lg font-semibold mb-4 text-green-800">Add / Update Crop</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <input id="crop-field" type="text" placeholder="Field/Plot name" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <input id="crop-name" type="text" placeholder="Crop (e.g. Wheat, Maize)" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <input id="crop-area" type="number" step="0.01" placeholder="Area (acres)" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <input id="planting-date" type="date" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <input id="expected-harvest" type="date" placeholder="Expected harvest" class="border border-gray-300 rounded-xl px-5 py-3.5 md:col-span-2">
+          </div>
+          <button onclick="addCrop()" class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-2xl font-medium">
+            Save Crop Record
+          </button>
+        </div>
+
+        <!-- Crop list -->
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Active Crops</h3>
+        <div id="crop-list" class="space-y-4"></div>
+
+      </div>
+    </div>
+
+    <!-- ====================== -->
+    <!--      ANIMALS SECTION   -->
+    <!-- ====================== -->
+    <div class="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
+
+      <div class="bg-gradient-to-r from-amber-600 to-amber-700 text-white px-8 py-5">
+        <h2 class="text-2xl font-semibold flex items-center gap-3">
+          <i class="fa-solid fa-cow text-3xl"></i>
+          Animal / Livestock Records
+        </h2>
+      </div>
+
+      <div class="p-8">
+
+        <!-- Add new animal form -->
+        <div class="mb-10 bg-amber-50 p-6 rounded-2xl border border-amber-200">
+          <h3 class="text-lg font-semibold mb-4 text-amber-800">Add / Update Animal</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <input id="animal-id" type="text" placeholder="Tag / ID / Name" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <select id="animal-type" class="border border-gray-300 rounded-xl px-5 py-3.5">
+              <option>Cow</option>
+              <option>Bulls</option>
+              <option>Goat</option>
+              <option>Sheep</option>
+              <option>Chicken</option>
+              <option>Other</option>
+            </select>
+            <input id="animal-count" type="number" placeholder="Number / Count" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <input id="animal-birth" type="date" placeholder="Birth / Acquisition date" class="border border-gray-300 rounded-xl px-5 py-3.5">
+            <input id="animal-notes" type="text" placeholder="Health / Notes" class="border border-gray-300 rounded-xl px-5 py-3.5 md:col-span-2">
+          </div>
+          <button onclick="addAnimal()" class="mt-6 w-full bg-amber-600 hover:bg-amber-700 text-white py-4 rounded-2xl font-medium">
+            Save Animal Record
+          </button>
+        </div>
+
+        <!-- Animal list -->
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Livestock Overview</h3>
+        <div id="animal-list" class="space-y-4"></div>
+
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+// ──────────────────────────────────────────────
+// Data persistence
+// ──────────────────────────────────────────────
+let crops = JSON.parse(localStorage.getItem('farmCrops')) || [
+  { field: "Plot A-1", crop: "Wheat", area: 12.5, planting: "2025-10-28", harvest: "2026-04-10", status: "Tillering phase" },
+  { field: "Plot B-2", crop: "Maize", area: 8.0, planting: "2026-02-15", harvest: "2026-07-05", status: "Vegetative" }
+];
+
+let animals = JSON.parse(localStorage.getItem('farmAnimals')) || [
+  { id: "C001", type: "Cow", count: 14, birth: "2024-03-10", notes: "2 in lactation, vacc. completed" },
+  { id: "G-45", type: "Goat", count: 28, birth: "2025-11-20", notes: "Kids expected April" },
+  { id: "CH-12", type: "Chicken", count: 180, birth: "2026-01-05", notes: "Layers, 92% production" }
+];
+
+// ──────────────────────────────────────────────
+// Render functions
+// ──────────────────────────────────────────────
+function renderCrops() {
+  const container = document.getElementById('crop-list');
+  container.innerHTML = '';
+
+  crops.forEach(crop => {
+    const div = document.createElement('div');
+    div.className = "bg-green-50 border border-green-100 rounded-2xl p-5";
+    div.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div>
+          <h4 class="font-semibold text-lg">${crop.crop} — ${crop.field}</h4>
+          <p class="text-sm text-gray-600 mt-1">${crop.area} acres</p>
+        </div>
+        <span class="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full">
+          ${crop.status || "Active"}
+        </span>
+      </div>
+      <div class="mt-3 text-sm text-gray-600 grid grid-cols-2 gap-2">
+        <div>Planted: <strong>${crop.planting}</strong></div>
+        <div>Harvest: <strong>${crop.harvest || "—"}</strong></div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderAnimals() {
+  const container = document.getElementById('animal-list');
+  container.innerHTML = '';
+
+  animals.forEach(animal => {
+    const div = document.createElement('div');
+    div.className = "bg-amber-50 border border-amber-100 rounded-2xl p-5";
+    div.innerHTML = `
+      <div class="flex justify-between items-start">
+        <div>
+          <h4 class="font-semibold text-lg">${animal.type} — ${animal.id}</h4>
+          <p class="text-sm text-gray-600 mt-1">${animal.count} heads</p>
+        </div>
+        <span class="text-xs bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+          Active
+        </span>
+      </div>
+      <div class="mt-3 text-sm text-gray-600 grid grid-cols-2 gap-2">
+        <div>Acquired/Born: <strong>${animal.birth}</strong></div>
+        <div>Notes: <strong>${animal.notes || "—"}</strong></div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ──────────────────────────────────────────────
+// Add new records
+// ──────────────────────────────────────────────
+function addCrop() {
+  const field = document.getElementById('crop-field').value.trim();
+  const cropName = document.getElementById('crop-name').value.trim();
+  const area = parseFloat(document.getElementById('crop-area').value);
+  const planting = document.getElementById('planting-date').value;
+  const harvest = document.getElementById('expected-harvest').value;
+
+  if (!field || !cropName || !area || !planting) {
+    alert("Please fill all required fields");
+    return;
+  }
+
+  crops.push({
+    field,
+    crop: cropName,
+    area,
+    planting,
+    harvest: harvest || "—",
+    status: "Newly planted"
+  });
+
+  localStorage.setItem('farmCrops', JSON.stringify(crops));
+  renderCrops();
+
+  // Clear form
+  document.getElementById('crop-field').value = "";
+  document.getElementById('crop-name').value = "";
+  document.getElementById('crop-area').value = "";
+  document.getElementById('planting-date').value = "";
+  document.getElementById('expected-harvest').value = "";
+}
+
+function addAnimal() {
+  const id = document.getElementById('animal-id').value.trim();
+  const type = document.getElementById('animal-type').value;
+  const count = parseInt(document.getElementById('animal-count').value);
+  const birth = document.getElementById('animal-birth').value;
+  const notes = document.getElementById('animal-notes').value.trim();
+
+  if (!id || !count || !birth) {
+    alert("Please fill ID, count and date");
+    return;
+  }
+
+  animals.push({
+    id,
+    type,
+    count,
+    birth,
+    notes: notes || "No notes"
+  });
+
+  localStorage.setItem('farmAnimals', JSON.stringify(animals));
+  renderAnimals();
+
+  // Clear form
+  document.getElementById('animal-id').value = "";
+  document.getElementById('animal-count').value = "";
+  document.getElementById('animal-birth').value = "";
+  document.getElementById('animal-notes').value = "";
+}
+
+// Initialize
+renderCrops();
+renderAnimals();
+</script>
+<footer>
+  <div class="container">
+    <p style="margin-bottom:1.5rem; font-size:1.1rem;">
+      © 2026 Smart Farm — Modern Farm Management Software
+    </p>
+    <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin-bottom:2rem;">
+      <a href="1-index.html">Home</a>
+      <a href="2-features.html">features</a>
+      <a href="3-stock.html">Crops & Animals</a>
+      <a href="4-inventory.html">Inventory</a>
+      <a href="5-finance.html">Finance</a>
+    </div>
+    <p style="font-size:0.95rem; opacity:0.7;">
+      Made with care for farmers who want to focus on growing .
+    </p>
+  </div>
+</footer>
+
+    
+</body>
+</html>
